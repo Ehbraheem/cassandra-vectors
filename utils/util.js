@@ -25,21 +25,14 @@ export async function connectToCassandra() {
 }
 
 // method that ensures there is a keyspace and table created in the database.
-export async function ensureKeyspaceAndTable() {
+export async function ensureKeyspaceAndTable(tableFieldsQuery) {
   console.log(`Ensuring KEYSPACE  ${CASSANDRA_KEYSPACE} and TABLE ${CASSANDRA_TABLE} exists ...`);
   const keyspaceQuery = `CREATE KEYSPACE IF NOT EXISTS ${CASSANDRA_KEYSPACE} WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};`;
   await client.execute(keyspaceQuery);
 
   const tableQuery = `CREATE TABLE IF NOT EXISTS ${CASSANDRA_KEYSPACE}.${CASSANDRA_TABLE} (
         id timeuuid PRIMARY KEY,
-        artist text,
-        title text,
-        year int,
-        sales float,
-        streams float,
-        downloads float,
-        radio_plays float,
-        rating float,
+        ${tableFieldsQuery},
         embedding VECTOR <FLOAT, 512>
     );`;
   await client.execute(tableQuery);
